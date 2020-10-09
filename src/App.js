@@ -54,7 +54,6 @@ class App extends React.Component {
             <ConfigProvider isWebView={true} colorScheme={this.state.colorScheme}>
                 <Panel id="id">
                     <PanelHeader>Расписание</PanelHeader>
-                    <Button size="m" onClick={() => this.logState()}>logState</Button>
                     <RaspTable colorScheme={this.state.colorScheme}/>
                 </Panel>
             </ConfigProvider>
