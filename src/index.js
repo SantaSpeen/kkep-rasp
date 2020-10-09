@@ -4,24 +4,13 @@ import 'core-js/es6/set';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import {applyMiddleware, createStore} from "redux";
-import thunk from 'redux-thunk';
-import {Provider} from 'react-redux';
-import rootReducer from './js/store/reducers';
-import {composeWithDevTools} from 'redux-devtools-extension';
-
 import '@vkontakte/vkui/dist/vkui.css';
 import './css/main.css';
 
 import App from './App';
 
-export const store = createStore(rootReducer, composeWithDevTools(
-    applyMiddleware(thunk),
-));
-
 ReactDOM.render(
-    <Provider store={store}>
-        <App/>
-    </Provider>,
+        <App/>,
     document.getElementById('root')
 );
+import("./js/eruda").then(({ default: eruda }) => {}); //runtime download

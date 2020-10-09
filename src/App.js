@@ -1,19 +1,33 @@
 import React from 'react';
-import {connect} from 'react-redux';
 
-import * as VK from './js/services/VK';
+import bridge from '@vkontakte/vk-bridge';
+import {Button, ConfigProvider, Panel, PanelHeader} from "@vkontakte/vkui";
 
-import {ConfigProvider} from "@vkontakte/vkui";
-
-import HomePanelBase from './js/panels/home/base';
+import RaspTable from "./js/panel/Table";
 
 class App extends React.Component {
 
-    componentDidMount() {
-        const {dispatch} = this.props;
+    state = {
+        load: false,
+        colorScheme: 'bright_light'
+    }
 
-        dispatch(VK.initApp());
+    async componentDidMount() {
 
+        const VKConnectCallback = (e) => {
+            if (e.detail.type === 'VKWebAppUpdateConfig') {
+                bridge.unsubscribe(VKConnectCallback);
+
+                const colorScheme = e.detail.data.scheme
+                this.setState({load: true, colorScheme: colorScheme})
+
+                document.getElementById("body").setAttribute("scheme", colorScheme)
+
+            }
+        };
+
+        bridge.subscribe(VKConnectCallback);
+        await bridge.send('VKWebAppInit', {})
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -30,23 +44,22 @@ class App extends React.Component {
         }
     }
 
-    render() {
-        const {colorScheme} = this.props;
+    logState(){
+        console.log(this.state)
+    }
 
-        return (
-            <ConfigProvider isWebView={true} colorScheme={colorScheme}>
-                <HomePanelBase id="base"/>
+    render() {
+
+        return (this.state.load &&
+            <ConfigProvider isWebView={true} colorScheme={this.state.colorScheme}>
+                <Panel id="id">
+                    <PanelHeader>Расписание</PanelHeader>
+                    <Button size="m" onClick={() => this.logState()}>logState</Button>
+                    <RaspTable colorScheme={this.state.colorScheme}/>
+                </Panel>
             </ConfigProvider>
         );
     }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        colorScheme: state.vkui.colorScheme
-    };
-};
-
-
-
-export default connect(mapStateToProps)(App);
+export default App;

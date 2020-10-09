@@ -12,7 +12,7 @@ import {
 
 import {Button, Div, PanelSpinner} from "@vkontakte/vkui";
 import Group from "@vkontakte/vkui/dist/components/Group/Group";
-import {getRasp} from "../../services/KKEP";
+import {getRasp} from "../KKEP";
 
 const useStyles = makeStyles({
     table: {
@@ -38,6 +38,12 @@ class RaspTable extends React.Component {
             .catch((err) => this.setState({loaded: false, spinner: false, error: err}) )
     }
 
+    getColor(){
+        const black = {backgroundColor: "#0a0a0a", color: "white"}
+        if (this.props.colorScheme === "space_gray")
+            return black
+    }
+
     async componentDidMount() {
         this.getRasp()
     }
@@ -47,7 +53,7 @@ class RaspTable extends React.Component {
 
         return (
             <Group>
-                <TableContainer component={Paper}>
+                <TableContainer component={Paper} style={this.getColor()}>
 
                     {this.state.error !== null && <div id='error'>
                         <h3 style={{color: 'red'}} align="center">Расписание не удалось получить</h3>
@@ -59,24 +65,24 @@ class RaspTable extends React.Component {
 
                     {this.state.loaded && <div id="loaded">
                         <h2 style={{color: 'cyan'}} align="center">Группа: {this.state.rasp[0].group} Неделя: {this.state.rasp[0].week}</h2>
-                            {this.state.rasp.map((row) => (<div id='table'>
+                            {this.state.rasp.map((row) => (<div key={row.day_name}>
                                 <h3 align='center'>{row.day_name}</h3>
-                                <Table className={classes.table} padding="default" key={row.day_name}>
+                                <Table className={classes.table} key={row.day_name}>
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell align="left">№</TableCell>
-                                            <TableCell align="center">Преподаватель</TableCell>
-                                            <TableCell align="center">Дисциплина</TableCell>
-                                            <TableCell align="center">Ауд.</TableCell>
+                                            <TableCell align="left" style={this.getColor()}>№</TableCell>
+                                            <TableCell align="center" style={this.getColor()}>Преподаватель</TableCell>
+                                            <TableCell align="center" style={this.getColor()}>Дисциплина</TableCell>
+                                            <TableCell align="center" style={this.getColor()}>Ауд.</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
                                         {row.pairs.map((row) => ( row.isnull === "0" &&
                                             <TableRow key={row.p_num}>
-                                                <TableCell align="left">{row.p_num}</TableCell>
-                                                <TableCell align="center">{row.p_prep}</TableCell>
-                                                <TableCell align="center">{row.p_subj.replace("Ин. язык/Ин. язык", "Ин. язык")}</TableCell>
-                                                <TableCell align="center">{row.p_aud}</TableCell>
+                                                <TableCell align="left" style={this.getColor()}>{row.p_num}</TableCell>
+                                                <TableCell align="center" style={this.getColor()}>{row.p_prep}</TableCell>
+                                                <TableCell align="center" style={this.getColor()}>{row.p_subj.replace("Ин. язык/Ин. язык", "Ин. язык")}</TableCell>
+                                                <TableCell align="center" style={this.getColor()}>{row.p_aud}</TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
