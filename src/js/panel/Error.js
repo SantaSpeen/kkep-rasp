@@ -14,6 +14,7 @@ class ErrorPage extends React.Component {
                 <Group>
                     <Div>
                         <p align="center">Если у вас нет ёще аккаунта в нашем колледже: <Link href="https://my.kkep.ru/">зарегистрируйтесь</Link>.</p>
+                        <p align="center"><small>ВК аккаунт должен быть привязан.</small></p>
                         <p align="center">Если вы считаете, что это ошибка <Link href='https://vk.me/l.vindeta'>напишите разработчику</Link>.</p>
                     </Div>
                 </Group>

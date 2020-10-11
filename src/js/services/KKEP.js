@@ -8,7 +8,7 @@ export const getGroupByVKId = async (id) =>{
 
 export const getRasp = async () => {
     const user = await bridge.send('VKWebAppGetUserInfo')
-    const group = getGroupByVKId(user.id)
+    const group = parseInt(getGroupByVKId(user.id)[0].group_num)
     return fetch(`https://test.my.kkep.ru/api.php?method=get_stud_rasp&group=` + group + `&token=` + TOKEN)
 }
 

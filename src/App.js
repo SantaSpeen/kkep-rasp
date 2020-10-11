@@ -1,7 +1,7 @@
 import React from 'react';
 
 import bridge from '@vkontakte/vk-bridge';
-import {Button, ConfigProvider, Panel, PanelHeader} from "@vkontakte/vkui";
+import {ConfigProvider, Panel, PanelHeader} from "@vkontakte/vkui";
 
 import RaspTable from "./js/panel/Table";
 import ErrorPage from "./js/panel/Error";
@@ -29,14 +29,19 @@ class App extends React.Component {
                 const user = await bridge.send('VKWebAppGetUserInfo')
                 const groupList = await getGroupByVKId(user.id)
 
-                if (groupList.length < 5)
-                    this.setState({
-                        group: parseInt(groupList[0].group_num),
-                        group_name: groupList[0].name,
-                        colorScheme: colorScheme
-                    })
-                else
+                if (groupList === null || groupList.length > 5)
                     this.setState({group: -1, error: true})
+
+                else
+                    if (groupList.length < 5)
+                        this.setState({
+                            group: parseInt(groupList[0].group_num),
+                            group_name: groupList[0].name,
+                            colorScheme: colorScheme
+                        })
+                    else
+                        this.setState({group: -1, error: true})
+
 
                 document.getElementById("body").setAttribute("scheme", colorScheme)
 
@@ -66,13 +71,11 @@ class App extends React.Component {
         return (
             <ConfigProvider isWebView={true} colorScheme={this.state.colorScheme}>
 
-                {this.state.group === 0 || this.state.group < 0 &&  <Panel id='check'>
+                {this.state.group === 0 && <ScreenSpinner />}
+
+                {this.state.group < 0 &&  <Panel id='check'>
                     <PanelHeader>ККЭП</PanelHeader>
-
-                    {this.state.group === 0 &&<ScreenSpinner />}
-
-                    {this.state.group < 0 && <ErrorPage/>}
-
+                    <ErrorPage/>
                 </Panel>}
 
                 {this.state.group > 0 &&  <Panel id="app">
