@@ -13,4 +13,4 @@ ReactDOM.render(
         <App/>,
     document.getElementById('root')
 );
-import("./js/eruda").then(({ default: eruda }) => {}); //runtime download
+//import("./js/debug/eruda").then(({ default: eruda }) => {}); //runtime download

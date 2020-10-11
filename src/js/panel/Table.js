@@ -12,7 +12,7 @@ import {
 
 import {Button, Div, PanelSpinner} from "@vkontakte/vkui";
 import Group from "@vkontakte/vkui/dist/components/Group/Group";
-import {getRasp} from "../KKEP";
+import {getRaspByGroup} from "../services/KKEP";
 
 const useStyles = makeStyles({
     table: {
@@ -33,14 +33,14 @@ class RaspTable extends React.Component {
 
     getRasp(){
         this.setState({loaded: false, spinner: true, error: null})
-        getRasp()
+        getRaspByGroup(this.props.appState.group)
             .then(async (res) => this.setState({loaded: true, spinner: false, rasp: await res.json()}) )
             .catch((err) => this.setState({loaded: false, spinner: false, error: err}) )
     }
 
     getColor(){
         const black = {backgroundColor: "#0a0a0a", color: "white"}
-        if (this.props.colorScheme === "space_gray")
+        if (this.props.appState.colorScheme === "space_gray")
             return black
     }
 
@@ -64,7 +64,7 @@ class RaspTable extends React.Component {
                     {this.state.spinner && <PanelSpinner/>}
 
                     {this.state.loaded && <div id="loaded">
-                        <h2 style={{color: 'cyan'}} align="center">Группа: {this.state.rasp[0].group} Неделя: {this.state.rasp[0].week}</h2>
+                        <h2 style={{color: 'cyan'}} align="center">Группа: {this.props.appState.group_name} Неделя: {this.state.rasp[0].week}</h2>
                             {this.state.rasp.map((row) => (<div key={row.day_name}>
                                 <h3 align='center'>{row.day_name}</h3>
                                 <Table className={classes.table} key={row.day_name}>

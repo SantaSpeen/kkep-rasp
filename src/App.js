@@ -4,22 +4,39 @@ import bridge from '@vkontakte/vk-bridge';
 import {Button, ConfigProvider, Panel, PanelHeader} from "@vkontakte/vkui";
 
 import RaspTable from "./js/panel/Table";
+import ErrorPage from "./js/panel/Error";
+
+import ScreenSpinner from "@vkontakte/vkui/dist/components/ScreenSpinner/ScreenSpinner";
+import {getGroupByVKId} from "./js/services/KKEP";
 
 class App extends React.Component {
 
     state = {
-        load: false,
+        group: 0,
+        group_name: undefined,
+        error: false,
         colorScheme: 'bright_light'
     }
 
     async componentDidMount() {
 
-        const VKConnectCallback = (e) => {
+        const VKConnectCallback = async (e) => {
+
             if (e.detail.type === 'VKWebAppUpdateConfig') {
                 bridge.unsubscribe(VKConnectCallback);
 
                 const colorScheme = e.detail.data.scheme
-                this.setState({load: true, colorScheme: colorScheme})
+                const user = await bridge.send('VKWebAppGetUserInfo')
+                const groupList = await getGroupByVKId(user.id)
+
+                if (groupList.length < 5)
+                    this.setState({
+                        group: parseInt(groupList[0].group_num),
+                        group_name: groupList[0].name,
+                        colorScheme: colorScheme
+                    })
+                else
+                    this.setState({group: -1, error: true})
 
                 document.getElementById("body").setAttribute("scheme", colorScheme)
 
@@ -28,34 +45,41 @@ class App extends React.Component {
 
         bridge.subscribe(VKConnectCallback);
         await bridge.send('VKWebAppInit', {})
-    }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        const {activeView, activeStory, activePanel, scrollPosition} = this.props;
+        // const groupList = await getGroupByVKId(1)
+        // console.log(groupList)
+        // if (groupList.length < 5)
+        //     this.setState({
+        //         group: parseInt(groupList[0].group_num),
+        //         group_name: groupList[0].name,
+        //         colorScheme: 'bright_light'
+        //     })
+        // else
+        //     this.setState({group: -1, error: true})
 
-        if (
-            prevProps.activeView !== activeView ||
-            prevProps.activePanel !== activePanel ||
-            prevProps.activeStory !== activeStory
-        ) {
-            let pageScrollPosition = scrollPosition[activeStory + "_" + activeView + "_" + activePanel] || 0;
-
-            window.scroll(0, pageScrollPosition);
-        }
-    }
-
-    logState(){
-        console.log(this.state)
     }
 
     render() {
 
-        return (this.state.load &&
+        console.log(this.state)
+
+        return (
             <ConfigProvider isWebView={true} colorScheme={this.state.colorScheme}>
-                <Panel id="id">
+
+                {this.state.group === 0 || this.state.group < 0 &&  <Panel id='check'>
+                    <PanelHeader>ККЭП</PanelHeader>
+
+                    {this.state.group === 0 &&<ScreenSpinner />}
+
+                    {this.state.group < 0 && <ErrorPage/>}
+
+                </Panel>}
+
+                {this.state.group > 0 &&  <Panel id="app">
                     <PanelHeader>Расписание</PanelHeader>
-                    <RaspTable colorScheme={this.state.colorScheme}/>
-                </Panel>
+                    <RaspTable appState={this.state}/>
+                </Panel>}
+
             </ConfigProvider>
         );
     }
