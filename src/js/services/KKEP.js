@@ -12,6 +12,10 @@ export const getRasp = async () => {
     return fetch(`https://test.my.kkep.ru/api.php?method=get_stud_rasp&group=` + group + `&token=` + TOKEN)
 }
 
-export const getRaspByGroup = async (group) => {
-    return fetch(`https://test.my.kkep.ru/api.php?method=get_stud_rasp&group=` + group + `&token=` + TOKEN)
+export const getRaspByGroup = async (group, week) => {
+    if (week !== null)
+        week = '&week='+week
+    else {week = ''}
+    console.log(group)
+    return fetch(`https://test.my.kkep.ru/api.php?method=get_stud_rasp&group=` + group + `&token=` + TOKEN + week)
 }
