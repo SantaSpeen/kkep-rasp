@@ -25,7 +25,37 @@ class App extends React.Component {
         name: "Not init name",
         avatar: 'https://vk.com/images/deactivated_100.png?ava=1',
 
-        activeStory: 'rasp'
+        activeStory: 'rasp',
+
+        snackbar: null
+    }
+
+    async bridgeAwayGate(id: Number | string) {
+
+        console.log('---------------------------------')
+        console.log("!!!!!APP STARTED NOT IN VK!!!!!!")
+        console.log("!!!!!APP STARTED NOT IN VK!!!!!!")
+        console.log("!!!!!APP STARTED NOT IN VK!!!!!!")
+        console.log('---------------------------------')
+
+        console.log('VKWebAppUpdateConfig event executing..')
+
+        const groupList = await getGroupByVKId(id)
+        console.log('Group: ', groupList)
+
+        if (groupList.length < 5) {
+            this.setState({
+                group: parseInt(groupList[0].group_num),
+                group_name: groupList[0].name,
+                colorScheme: 'space_gray',
+                name: "Максим Распутин"
+            })
+            document.getElementById("body").setAttribute("scheme", this.state.colorScheme)
+        } else
+            this.setState({group: -1, error: true})
+
+        console.log('State: ', this.state)
+        console.log('VKWebAppUpdateConfig event ready')
     }
 
     async componentDidMount() {
@@ -33,6 +63,9 @@ class App extends React.Component {
         const VKConnectCallback = async (e) => {
 
             if (e.detail.type === 'VKWebAppUpdateConfig') {
+
+                console.log('VKWebAppUpdateConfig event executing..')
+
                 bridge.unsubscribe(VKConnectCallback);
 
                 const colorScheme = e.detail.data.scheme
@@ -60,25 +93,18 @@ class App extends React.Component {
 
                 document.getElementById("body").setAttribute("scheme", colorScheme)
 
+                console.log(this.state)
+                console.log('VKWebAppUpdateConfig event ready')
+
             }
         };
 
         bridge.subscribe(VKConnectCallback);
-        // await bridge.send('VKWebAppInit', {})
+        //await bridge.send('VKWebAppInit', {})
 
-        const groupList = await getGroupByVKId(370926160)
-        console.log(groupList)
-        if (groupList.length < 5)
-            this.setState({
-                group: parseInt(groupList[0].group_num),
-                group_name: groupList[0].name,
-                colorScheme: 'bright_light',
-                name: "Максим Распутин"
-            })
-        else
-            this.setState({group: -1, error: true})
+        await this.bridgeAwayGate(370926160)
 
-        console.log(this.state)
+        console.log('App started')
 
     }
 
@@ -141,6 +167,7 @@ class App extends React.Component {
                     </Root>
                 </Epic>
                 }
+
 
             </ConfigProvider>
         );

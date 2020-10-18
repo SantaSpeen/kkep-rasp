@@ -1,9 +1,9 @@
 import React from 'react';
 import {Group} from "@vkontakte/vkui";
 
-import Avatar from "@material-ui/core/Avatar";
 import Header from "@vkontakte/vkui/dist/components/Header/Header";
 import SimpleCell from "@vkontakte/vkui/dist/components/SimpleCell/SimpleCell";
+import Avatar from "@vkontakte/vkui/dist/components/Avatar/Avatar";
 
 class User extends React.Component {
 
@@ -23,7 +23,6 @@ class User extends React.Component {
             </Group>
         )
     }
-
 }
 
 export default User;

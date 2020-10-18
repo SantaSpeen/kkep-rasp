@@ -1,4 +1,3 @@
-import bridge from '@vkontakte/vk-bridge';
 const TOKEN = "2450cda654b43f77aecad6a5950d672e"
 
 export const getGroupByVKId = async (id) =>{
@@ -6,16 +5,8 @@ export const getGroupByVKId = async (id) =>{
     return await res.json()
 }
 
-export const getRasp = async () => {
-    const user = await bridge.send('VKWebAppGetUserInfo')
-    const group = parseInt(getGroupByVKId(user.id)[0].group_num)
-    return fetch(`https://test.my.kkep.ru/api.php?method=get_stud_rasp&group=` + group + `&token=` + TOKEN)
-}
-
-export const getRaspByGroup = async (group, week) => {
-    if (week !== null)
+export const getRasp = async (group, week, isRaw) => {
+    if (week !== '')
         week = '&week='+week
-    else {week = ''}
-    console.log(group)
-    return fetch(`https://test.my.kkep.ru/api.php?method=get_stud_rasp&group=` + group + `&token=` + TOKEN + week)
+    return fetch(`https://test.my.kkep.ru/api.php?method=get_stud_rasp&group=` + group + `&israw=` + isRaw + `&token=` + TOKEN + week)
 }
